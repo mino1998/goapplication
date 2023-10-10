@@ -1,0 +1,33 @@
+name: GitAction
+# on은 어떤 이벤트가 발생했을 때, 
+# cron이면 주기적인 작업이 되는 것이고, 
+on:
+  push:
+    branches: ["main"] # 메인 브랜치에 push 이벤트가 발생하면
+  pull_request:
+    branches: ["main"] # 메인 브랜치에 pr이 발생하면
+#뭘 할 것인지 작성하자
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set Up GO # python이라면 Set up Python 해서 python-version: 3.12 어쩌구 하겠지
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.15
+      - name: Build
+        run: go build -v ./... #현 디렉에 있는 모든 것을 build
+      - name: Login To DockerHub
+        uses: docker/login-action@v1
+        with: 
+          username: mino1998
+          password: dckr_pat_R_ZnhkiakzyIEpypyK8ge7WF3EA
+      - name: build and release to DockerHub
+        env: 
+          NAME: mino1998
+          REPO: goapplication
+        run: |
+          docker build -t $REPO 
+          docker tag $REPO:latest $NAME/$REPO:latest
+          docker push $NAME/$REPO:latest
