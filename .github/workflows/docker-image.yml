@@ -28,6 +28,6 @@ jobs:
           NAME: mino1998
           REPO: goapplication
         run: |
-          docker build -t $REPO 
+          docker build -t $REPO .
           docker tag $REPO:latest $NAME/$REPO:latest
           docker push $NAME/$REPO:latest
